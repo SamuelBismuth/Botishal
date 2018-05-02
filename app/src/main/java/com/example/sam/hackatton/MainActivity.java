@@ -2,30 +2,31 @@ package com.example.sam.hackatton;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.scaledrone.chat.R;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.scaledrone.lib.Listener;
-import com.scaledrone.lib.Member;
-import com.scaledrone.lib.Room;
-import com.scaledrone.lib.RoomListener;
-import com.scaledrone.lib.Scaledrone;
+
 
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements RoomListener {
+public class MainActivity extends AppCompatActivity {
 
-    private String channelID = "1JDtvLIYGg6NSyNn";
-    private String roomName = "observable-room";
     private EditText editText;
-    private Scaledrone scaledrone;
     private MessageAdapter messageAdapter;
     private ListView messagesView;
+    private String answer = "";
+    private String botColor = getRandomColor();
+    private String botName = "Botishal";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,69 +38,20 @@ public class MainActivity extends AppCompatActivity implements RoomListener {
         messageAdapter = new MessageAdapter(this);
         messagesView = (ListView) findViewById(R.id.messages_view);
         messagesView.setAdapter(messageAdapter);
-
-        MemberData data = new MemberData(getRandomName(), getRandomColor());
-
-        scaledrone = new Scaledrone(channelID, data);
-        scaledrone.connect(new Listener() {
-            @Override
-            public void onOpen() {
-                System.out.println("Scaledrone connection open");
-                scaledrone.subscribe(roomName, MainActivity.this);
-            }
-
-            @Override
-            public void onOpenFailure(Exception ex) {
-                System.err.println(ex);
-            }
-
-            @Override
-            public void onFailure(Exception ex) {
-                System.err.println(ex);
-            }
-
-            @Override
-            public void onClosed(String reason) {
-                System.err.println(reason);
-            }
-        });
     }
 
     public void sendMessage(View view) {
         String message = editText.getText().toString();
         if (message.length() > 0) {
-            scaledrone.publish(roomName, message);
             editText.getText().clear();
         }
-    }
-
-    @Override
-    public void onOpen(Room room) {
-        System.out.println("Conneted to room");
-    }
-
-    @Override
-    public void onOpenFailure(Room room, Exception ex) {
-        System.err.println(ex);
-    }
-
-    @Override
-    public void onMessage(Room room, final JsonNode json, final Member member) {
-        final ObjectMapper mapper = new ObjectMapper();
-        try {
-            final MemberData data = mapper.treeToValue(member.getClientData(), MemberData.class);
-            boolean belongsToCurrentUser = member.getId().equals(scaledrone.getClientID());
-            final Message message = new Message(json.asText(), data, belongsToCurrentUser);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    messageAdapter.add(message);
-                    messagesView.setSelection(messagesView.getCount() - 1);
-                }
-            });
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        MemberData mebDat = new MemberData(getRandomName(), getRandomColor());
+        com.example.sam.hackatton.Message message1 = new com.example.sam.hackatton.Message(message, mebDat,true);
+        messageAdapter.add(message1);
+        String answer = test(message);
+        MemberData mebDat2 = new MemberData(botName, botColor);
+        com.example.sam.hackatton.Message message2 = new com.example.sam.hackatton.Message(answer, mebDat2,false);
+        messageAdapter.add(message2);
     }
 
     private String getRandomName() {
@@ -119,6 +71,25 @@ public class MainActivity extends AppCompatActivity implements RoomListener {
             sb.append(Integer.toHexString(r.nextInt()));
         }
         return sb.toString().substring(0, 7);
+    }
+
+    public String test(String question) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "http://172.20.10.5:8888/" + question;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        answer = response;
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("That didn't work!",  error.toString());
+            }
+        });
+        queue.add(stringRequest);
+        return answer;
     }
 }
 

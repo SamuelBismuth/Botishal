@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:clipToPadding="false"
     android:focusableInTouchMode="true"
-    tools:context="MainActivity">
+    tools:context="com.example.sam.hackatton.MainActivity">
 
     <ListView
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:ems="10"
-            android:hint="Write a message"
+            android:hint="שלח הודעה"
             android:inputType="text"
             android:paddingHorizontal="10dp"
             android:text="" />
