@@ -1,4 +1,5 @@
 package com.example.sam.hackatton;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -13,7 +14,6 @@ import com.example.scaledrone.chat.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class MessageAdapter extends BaseAdapter {
 
@@ -49,7 +49,6 @@ public class MessageAdapter extends BaseAdapter {
         MessageViewHolder holder = new MessageViewHolder();
         LayoutInflater messageInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         Message message = messages.get(i);
-
         if (message.isBelongsToCurrentUser()) {
             convertView = messageInflater.inflate(R.layout.my_message, null);
             holder.messageBody = (TextView) convertView.findViewById(R.id.message_body);
@@ -61,16 +60,13 @@ public class MessageAdapter extends BaseAdapter {
             holder.name = (TextView) convertView.findViewById(R.id.name);
             holder.messageBody = (TextView) convertView.findViewById(R.id.message_body);
             convertView.setTag(holder);
-
             holder.name.setText(message.getData().getName());
             holder.messageBody.setText(message.getText());
             GradientDrawable drawable = (GradientDrawable) holder.avatar.getBackground();
             drawable.setColor(Color.parseColor(message.getData().getColor()));
         }
-
         return convertView;
     }
-
 }
 
 class MessageViewHolder {

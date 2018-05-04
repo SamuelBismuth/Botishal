@@ -1,7 +1,7 @@
 package com.example.sam.hackatton;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -15,7 +15,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.scaledrone.chat.R;
 
-
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,18 +22,14 @@ public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private MessageAdapter messageAdapter;
     private ListView messagesView;
-    private String answer = "";
     private String botColor = getRandomColor();
     private String botName = "Botishal";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         editText = (EditText) findViewById(R.id.editText);
-
         messageAdapter = new MessageAdapter(this);
         messagesView = (ListView) findViewById(R.id.messages_view);
         messagesView.setAdapter(messageAdapter);
@@ -42,16 +37,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendMessage(View view) {
         String message = editText.getText().toString();
-        if (message.length() > 0) {
+        if (message.length() > 0)
             editText.getText().clear();
-        }
         MemberData mebDat = new MemberData(getRandomName(), getRandomColor());
-        com.example.sam.hackatton.Message message1 = new com.example.sam.hackatton.Message(message, mebDat,true);
+        com.example.sam.hackatton.Message message1 = new com.example.sam.hackatton.Message(message, mebDat, true);
         messageAdapter.add(message1);
-        String answer = test(message);
-        MemberData mebDat2 = new MemberData(botName, botColor);
-        com.example.sam.hackatton.Message message2 = new com.example.sam.hackatton.Message(answer, mebDat2,false);
-        messageAdapter.add(message2);
+        HTTPPost(message);
     }
 
     private String getRandomName() {
@@ -67,30 +58,52 @@ public class MainActivity extends AppCompatActivity {
     private String getRandomColor() {
         Random r = new Random();
         StringBuffer sb = new StringBuffer("#");
-        while(sb.length() < 7){
+        while (sb.length() < 7)
             sb.append(Integer.toHexString(r.nextInt()));
-        }
         return sb.toString().substring(0, 7);
     }
 
-    public String test(String question) {
+    private void HTTPPost(String question) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://172.20.10.5:8888/" + question;
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+        String temp = fromQuestionToHTTPQuestion(question);
+        String url = "http://172.20.10.5:8888/" + temp;
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        answer = response;
+                        MemberData mebDat2 = new MemberData(botName, botColor);
+                        com.example.sam.hackatton.Message message2 = new com.example.sam.hackatton.Message(fromHTTPAnswerToHebrew(response), mebDat2, false);
+                        messageAdapter.add(message2);
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("That didn't work!",  error.toString());
-            }
-        });
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("That didn't work!", error.toString());
+                    }
+                });
         queue.add(stringRequest);
+    }
+
+    private String fromQuestionToHTTPQuestion(String question) {
+        String answer = Integer.toString(question.charAt(0));
+        for (int i = 1; i < question.length(); i++) {
+            answer += "+" + Integer.toString(question.charAt(i));
+        }
         return answer;
     }
+
+    private String fromHTTPAnswerToHebrew(String answer) {
+        String[] array = answer.split("\\+");
+        String reformated = Character.toString((char) Integer.parseInt(array[0]));
+        for (int i = 1; i < array.length; i++) {
+            reformated += Character.toString((char) Integer.parseInt(array[i]));
+        }
+        return reformated;
+    }
+
 }
 
 class MemberData {
@@ -121,4 +134,3 @@ class MemberData {
                 '}';
     }
 }
-
