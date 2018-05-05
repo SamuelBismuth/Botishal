@@ -1,4 +1,4 @@
-package com.example.sam.hackatton;
+package com.example.sam.botishal;
 
 import android.app.Activity;
 import android.content.Context;

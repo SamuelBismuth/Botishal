@@ -1,4 +1,4 @@
-package com.example.sam.hackatton;
+package com.example.sam.botishal;
 
 public class Message {
     private String text;

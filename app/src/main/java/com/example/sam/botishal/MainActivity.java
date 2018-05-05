@@ -1,4 +1,4 @@
-package com.example.sam.hackatton;
+package com.example.sam.botishal;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +13,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.scaledrone.chat.R;
 
 import java.util.Random;
 
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         if (message.length() > 0)
             editText.getText().clear();
         MemberData mebDat = new MemberData(getRandomName(), getRandomColor());
-        com.example.sam.hackatton.Message message1 = new com.example.sam.hackatton.Message(message, mebDat, true);
+        Message message1 = new Message(message, mebDat, true);
         messageAdapter.add(message1);
         HTTPPost(message);
     }
@@ -74,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         MemberData mebDat2 = new MemberData(botName, botColor);
-                        com.example.sam.hackatton.Message message2 = new com.example.sam.hackatton.Message(fromHTTPAnswerToHebrew(response), mebDat2, false);
+                        Message message2 = new Message(fromHTTPAnswerToHebrew(response), mebDat2, false);
                         messageAdapter.add(message2);
                     }
                 },

@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:clipToPadding="false"
     android:focusableInTouchMode="true"
-    tools:context="com.example.sam.hackatton.MainActivity">
+    tools:context=".MainActivity">
 
     <ListView
         android:layout_width="match_parent"
