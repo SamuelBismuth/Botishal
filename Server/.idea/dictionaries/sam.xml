@@ -2,6 +2,9 @@
   <dictionary name="sam">
     <words>
       <w>botishal</w>
+      <w>botprofile</w>
+      <w>chatbot</w>
+      <w>chatterbot</w>
     </words>
   </dictionary>
 </component>
