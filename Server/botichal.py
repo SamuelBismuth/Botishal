@@ -1,23 +1,49 @@
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
+from chatterbot.trainers import ChatterBotCorpusTrainer
 
-from mysqlQueries import query
+from mysqlQueries import make_a_query
 
 chatbot = ChatBot("Botishal")
+chatbot.set_trainer(ChatterBotCorpusTrainer)
+chatbot.train("chatterbot.corpus.hebrew.conversations",
+              "chatterbot.corpus.hebrew.greetings",
+              "chatterbot.corpus.hebrew.botprofile")
+
 chatbot.set_trainer(ListTrainer)
 
-teacherFNList = []
+list_of_teachers = ["אראל סגל הלוי", "בועז בן מושה"]
+list_of_teachers_first_name = ['אראל', 'בעוז']
+list_of_teachers_last_name = ['סגל הלוי', 'בן מושה']
+list_of_lessons = ['c++', 'מונחה עצמים', 'אוטומטיים 2']
 
-######################################################
-######################################################
-############ Mail Querries  Train############################
-def trainMail(ListOfTeachers, FieldName):
-    for teacher in ListOfTeachers:
-            conversation = []
-            conversation.append("מה המייל של " + teacher)
-            conversation.append(query("select mail from Teachers where "+FieldName+" = " + teacher,1))
-            chatbot.train(conversation)
 
+def train_mail():
+    for teacher in list_of_teachers_first_name:
+        chatbot.train(["מה המייל של " +
+                       teacher,
+                       "המייל של " +
+                       teacher +
+                       " הוא " +
+                       make_a_query("SELECT email FROM Teachers WHERE firstName = '" + teacher + "'") + " :)"])
+
+
+def train_conversation():
+    chatbot.train(
+        ["שלום",
+         "שלום גם לך"])
+    chatbot.train(
+        ["מה נשמע",
+         "הכל בסדר, מה בקשתך?"])
+    chatbot.train(
+        ["תודה רבה",
+         "בכיף המשך יום נעים"])
+    chatbot.train(
+        ["תודה",
+         "בכיף המשך יום נעים"])
+
+
+'''
 def trainMail(ListOfTeachers, FieldName1,FieldName2):
     for teacher in ListOfTeachers:
             a,b=teacher.split(" ")
@@ -362,21 +388,7 @@ def trainLesson13(ListOfLesson ):
 ###########################################################################################
 ###########################################################################################
 ###########################Conversation train##############################################
-'''def trainConversation():
-    conversation = [
-        "שלום",
-        "שלום גם לך",
-        "מה נשמע",
-        "הכל בסדר, מה בקשתך?",
-    ]
-    chatbot.train(conversation)
-    conersation = [
-        "תודה רבה",
-        "בכיף המשך יום נעים",
-        "תודה",
-        "בכיף המשך יום נעים"
-    ]
-    chatbot.train(conversation)
+
 
 
 def trainConversation1():
@@ -390,12 +402,7 @@ def trainConversation2():
     conversation = []
     conversation.append("מתי אוטומטיים?")
     conversation.append("Thuesday morning")
-    chatbot.train(conversation)'''
-
-listOfTeacher = ['אראל סגל', 'גיל לוי', 'אור קדרוי']
-listOfLessons = ['c++', 'מונחה עצמים', 'אוטומטיים 2']
-
-'''
+    chatbot.train(conversation)
 
 trainLesson(listOfLessons)
 trainLesson1(listOfLessons)
@@ -414,7 +421,6 @@ trainLesson13(listOfLessons)
 trainLesson14(listOfLessons)
 trainLesson15(listOfLessons)
 
-trainMail()
 trainMail1()
 trainMail2()
 trainMail3()
@@ -425,4 +431,9 @@ trainMail7()
 trainMail8()
 trainMail9()
 trainMail10()
-trainMail11()'''
+trainMail11()
+'''
+
+
+train_mail()
+train_conversation()

@@ -6,7 +6,7 @@ HOST, PORT = '', 8888
 
 
 def from_http_question_to_hebrew(response):
-    response = response.split('+');
+    response = response.split('+')
     hebrew_answer = chr(int(response[0]))
     for i in range(1, len(response)):
         hebrew_answer += chr(int(response[i]))
